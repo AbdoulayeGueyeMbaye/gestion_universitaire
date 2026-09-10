@@ -10,17 +10,17 @@ use FastRoute\RouteCollector;
 
 function addRoutes(RouteCollector $routes): void
 {
-    $routes->get('/', [SalleController::class, 'index']);
-    $routes->get('/salles', [SalleController::class, 'index']);
-    $routes->get('/salles/create', [SalleController::class, 'create']);
-    $routes->post('/salles', [SalleController::class, 'store']);
-    $routes->get('/salles/{id:\d+}', [SalleController::class, 'show']);
-    $routes->get('/salles/{id:\d+}/edit', [SalleController::class, 'edit']);
-    $routes->post('/salles/{id:\d+}/edit', [SalleController::class, 'update']);
+    $routes->addRoute('GET', '/', [SalleController::class, 'index']);
+    $routes->addRoute('GET', '/salles', [SalleController::class, 'index']);
+    $routes->addRoute('GET', '/salles/create', [SalleController::class, 'create']);
+    $routes->addRoute('POST', '/salles', [SalleController::class, 'store']);
+    $routes->addRoute('GET', '/salles/{id:\d+}', [SalleController::class, 'show']);
+    $routes->addRoute('GET', '/salles/{id:\d+}/edit', [SalleController::class, 'edit']);
+    $routes->addRoute('POST', '/salles/{id:\d+}/edit', [SalleController::class, 'update']);
 
-    $routes->get('/reservations', [ReservationController::class, 'index']);
-    $routes->get('/reservations/create', [ReservationController::class, 'create']);
-    $routes->post('/reservations', [ReservationController::class, 'store']);
-    $routes->get('/reservations/{id:\d+}', [ReservationController::class, 'show']);
-    $routes->post('/reservations/{id:\d+}/cancel', [ReservationController::class, 'cancel']);
+    $routes->addRoute('GET', '/reservations', [ReservationController::class, 'index']);
+    $routes->addRoute('GET', '/reservations/create', [ReservationController::class, 'create']);
+    $routes->addRoute('POST', '/reservations', [ReservationController::class, 'store']);
+    $routes->addRoute('GET', '/reservations/{id:\d+}', [ReservationController::class, 'show']);
+    $routes->addRoute('POST', '/reservations/{id:\d+}/cancel', [ReservationController::class, 'cancel']);
 }
