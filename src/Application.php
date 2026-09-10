@@ -4,15 +4,34 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Routing\Router;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 final class Application
 {
-	public function __construct(private Capsule $database)
-	{
+	public function __construct(
+		private Capsule $database,
+		private Router $router,
+	) {
 	}
 
-	public function run(array $arguments): int
+	public function run(array $arguments = []): int
+	{
+		if ($arguments !== []) {
+			return $this->runCommand($arguments);
+		}
+
+		$response = $this->router->dispatch(
+			$_SERVER['REQUEST_METHOD'] ?? 'GET',
+			$_SERVER['REQUEST_URI'] ?? '/',
+			$_POST,
+		);
+		$this->send($response);
+
+		return 0;
+	}
+
+	private function runCommand(array $arguments): int
 	{
 		$command = $arguments[1] ?? '';
 
@@ -57,5 +76,16 @@ final class Application
 
 			return 1;
 		}
+	}
+
+	private function send(array $response): void
+	{
+		http_response_code($response['status']);
+
+		foreach ($response['headers'] as $name => $value) {
+			header($name . ': ' . $value, true, $response['status']);
+		}
+
+		echo $response['body'];
 	}
 }

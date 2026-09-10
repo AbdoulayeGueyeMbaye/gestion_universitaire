@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\DTO\CreerReservationDTOBuilder;
 use App\Exception\ReservationIntrouvableException;
-use App\Http\Response;
 use App\Repository\ReservationRepositoryInterface;
 use App\Repository\SalleRepositoryInterface;
 use App\Service\AnnulerReservationService;
@@ -27,15 +26,15 @@ final class ReservationController
     ) {
     }
 
-    public function index(?int $salleId = null): Response
+    public function index(?int $salleId = null): array
     {
-        return Response::html($this->views->render('reservation/index', [
+        return $this->html($this->views->render('reservation/index', [
             'title' => 'Reservations',
             'reservations' => $this->reservations->lister($salleId),
         ]));
     }
 
-    public function show(int $id): Response
+    public function show(int $id): array
     {
         $reservation = $this->reservations->trouver($id);
 
@@ -43,18 +42,18 @@ final class ReservationController
             return $this->notFound();
         }
 
-        return Response::html($this->views->render('reservation/show', [
+        return $this->html($this->views->render('reservation/show', [
             'title' => 'Reservation #' . $reservation->id,
             'reservation' => $reservation,
         ]));
     }
 
-    public function create(): Response
+    public function create(): array
     {
         return $this->form();
     }
 
-    public function store(array $data): Response
+    public function store(array $data): array
     {
         $result = $this->validator->validate($data);
 
@@ -69,10 +68,10 @@ final class ReservationController
             return $this->form($data, ['reservation' => [$exception->getMessage()]], 422);
         }
 
-        return Response::redirect('/reservations');
+        return $this->redirect('/reservations');
     }
 
-    public function cancel(int $id): Response
+    public function cancel(int $id): array
     {
         try {
             $this->annulation->execute($id);
@@ -80,12 +79,12 @@ final class ReservationController
             return $this->notFound();
         }
 
-        return Response::redirect('/reservations');
+        return $this->redirect('/reservations');
     }
 
-    private function form(array $data = [], array $errors = [], int $status = 200): Response
+    private function form(array $data = [], array $errors = [], int $status = 200): array
     {
-        return Response::html($this->views->render('reservation/form', [
+        return $this->html($this->views->render('reservation/form', [
             'title' => 'Ajouter une reservation',
             'data' => $data,
             'errors' => $errors,
@@ -93,8 +92,22 @@ final class ReservationController
         ]), $status);
     }
 
-    private function notFound(): Response
+    private function notFound(): array
     {
-        return Response::html($this->views->render('error/404', ['title' => 'Page introuvable']), 404);
+        return $this->html($this->views->render('error/404', ['title' => 'Page introuvable']), 404);
+    }
+
+    private function html(string $body, int $status = 200): array
+    {
+        return [
+            'body' => $body,
+            'status' => $status,
+            'headers' => ['Content-Type' => 'text/html; charset=UTF-8'],
+        ];
+    }
+
+    private function redirect(string $location): array
+    {
+        return ['body' => '', 'status' => 302, 'headers' => ['Location' => $location]];
     }
 }

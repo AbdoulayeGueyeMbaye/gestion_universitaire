@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+namespace App\Routing;
+
 use App\Controller\ReservationController;
 use App\Controller\SalleController;
 use FastRoute\RouteCollector;
 
-return static function (RouteCollector $routes): void {
+function addRoutes(RouteCollector $routes): void
+{
     $routes->get('/', [SalleController::class, 'index']);
     $routes->get('/salles', [SalleController::class, 'index']);
     $routes->get('/salles/create', [SalleController::class, 'create']);
@@ -20,4 +23,4 @@ return static function (RouteCollector $routes): void {
     $routes->post('/reservations', [ReservationController::class, 'store']);
     $routes->get('/reservations/{id:\d+}', [ReservationController::class, 'show']);
     $routes->post('/reservations/{id:\d+}/cancel', [ReservationController::class, 'cancel']);
-};
+}

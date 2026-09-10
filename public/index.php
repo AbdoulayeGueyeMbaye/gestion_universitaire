@@ -9,4 +9,4 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $container = ContainerFactory::create(dirname(__DIR__));
 
-exit($container->get(Application::class)->run($argv));
+$container->get(Application::class)->run();

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Routing;
 
-use App\Http\Response;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use InvalidArgumentException;
@@ -21,36 +20,32 @@ final class Router
 
     public static function fromRoutes(ContainerInterface $container, string $routesFile): self
     {
-        $routeDefinition = require $routesFile;
+        require $routesFile;
 
-        if (!is_callable($routeDefinition)) {
-            throw new InvalidArgumentException('Le fichier de routes doit retourner un callable.');
-        }
-
-        $dispatcher = simpleDispatcher(static function (RouteCollector $routes) use ($routeDefinition): void {
-            $routeDefinition($routes);
+        $dispatcher = simpleDispatcher(static function (RouteCollector $routes): void {
+            \App\Routing\addRoutes($routes);
         });
 
         return new self($container, $dispatcher);
     }
 
-    public function dispatch(string $method, string $uri, array $input = []): Response
+    public function dispatch(string $method, string $uri, array $input = []): array
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
         $result = $this->dispatcher->dispatch(strtoupper($method), $path);
 
         switch ($result[0]) {
             case Dispatcher::NOT_FOUND:
-                return Response::html('<h1>Page introuvable</h1>', 404);
+                return $this->htmlResponse('<h1>Page introuvable</h1>', 404);
             case Dispatcher::METHOD_NOT_ALLOWED:
-                return new Response(
-                    '<h1>Methode non autorisee</h1>',
-                    405,
-                    [
+                return [
+                    'body' => '<h1>Methode non autorisee</h1>',
+                    'status' => 405,
+                    'headers' => [
                         'Allow' => implode(', ', $result[1]),
                         'Content-Type' => 'text/html; charset=UTF-8',
                     ],
-                );
+                ];
             case Dispatcher::FOUND:
                 return $this->callHandler($result[1], $result[2], strtoupper($method), $input);
             default:
@@ -58,7 +53,7 @@ final class Router
         }
     }
 
-    private function callHandler(mixed $handler, array $parameters, string $method, array $input): Response
+    private function callHandler(mixed $handler, array $parameters, string $method, array $input): array
     {
         if (!is_array($handler) || count($handler) !== 2) {
             throw new InvalidArgumentException('Le handler doit contenir une classe et une methode.');
@@ -74,10 +69,19 @@ final class Router
 
         $response = $controller->{$action}(...$arguments);
 
-        if (!$response instanceof Response) {
-            throw new InvalidArgumentException('Une action doit retourner une Response.');
+        if (!isset($response['status'], $response['headers'], $response['body'])) {
+            throw new InvalidArgumentException('Une action doit retourner une reponse HTTP standard.');
         }
 
         return $response;
+    }
+
+    private function htmlResponse(string $body, int $status): array
+    {
+        return [
+            'body' => $body,
+            'status' => $status,
+            'headers' => ['Content-Type' => 'text/html; charset=UTF-8'],
+        ];
     }
 }
