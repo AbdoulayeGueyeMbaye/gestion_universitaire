@@ -32,7 +32,9 @@ Les instructions d'installation et d'utilisation seront complétées au fil des 
 cp .env.example .env
 composer install
 php database/migrate.php
+php database/seed.php
 ```
 
 La migration nécessite une base MySQL accessible et l'extension PHP `pdo_mysql`.
 Les commandes recommandées sont `php bin/console.php migrate:up` et `php bin/console.php migrate:down`.
+Le seeder peut être relancé sans créer de doublons avec `php database/seed.php`.

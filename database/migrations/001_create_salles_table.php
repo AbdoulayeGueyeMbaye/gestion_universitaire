@@ -22,6 +22,7 @@ final class CreateSallesTable
             $table->string('type', 30);
             $table->boolean('active')->default(true);
             $table->timestamps();
+            $table->unique(['nom', 'batiment']);
         });
     }
 

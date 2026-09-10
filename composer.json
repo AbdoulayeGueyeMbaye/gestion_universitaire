@@ -19,7 +19,8 @@
     "scripts": {
         "check-autoload": "php -r \"require 'vendor/autoload.php'; echo class_exists('App\\\\Application') ? 'Autoload OK'.PHP_EOL : 'Autoload KO'.PHP_EOL;\"",
         "migrate-up": "php bin/console.php migrate:up",
-        "migrate-down": "php bin/console.php migrate:down"
+        "migrate-down": "php bin/console.php migrate:down",
+        "db-seed": "php database/seed.php"
     },
     "minimum-stability": "stable",
     "prefer-stable": true
