@@ -20,13 +20,6 @@ final readonly class CreerReservationDTO
 
     public static function fromArray(array $data): self
     {
-        return new self(
-            salleId: (int) $data['salle_id'],
-            responsable: (string) $data['responsable'],
-            email: (string) $data['email'],
-            motif: (string) $data['motif'],
-            dateDebut: new DateTimeImmutable((string) $data['date_debut']),
-            dateFin: new DateTimeImmutable((string) $data['date_fin']),
-        );
+        return (new CreerReservationDTOBuilder())->fromArray($data)->build();
     }
 }
