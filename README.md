@@ -25,3 +25,13 @@ Le projet est en cours de construction, étape par étape, conformément au cahi
 - PHP dotenv.
 
 Les instructions d'installation et d'utilisation seront complétées au fil des étapes.
+
+## Configuration locale
+
+```bash
+cp .env.example .env
+composer install
+php database/migrate.php
+```
+
+La migration nécessite une base MySQL accessible et l'extension PHP `pdo_mysql`.
