@@ -4,22 +4,16 @@ declare(strict_types=1);
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-return static function (Capsule $capsule): void {
-    $schema = $capsule->schema();
+final class CreateReservationsTable
+{
+    public function up(Capsule $capsule): void
+    {
+        $schema = $capsule->schema();
 
-    if (!$schema->hasTable('salles')) {
-        $schema->create('salles', static function ($table): void {
-            $table->id();
-            $table->string('nom', 100);
-            $table->string('batiment', 100);
-            $table->unsignedInteger('capacite');
-            $table->string('type', 30);
-            $table->boolean('active')->default(true);
-            $table->timestamps();
-        });
-    }
+        if ($schema->hasTable('reservations')) {
+            return;
+        }
 
-    if (!$schema->hasTable('reservations')) {
         $schema->create('reservations', static function ($table): void {
             $table->id();
             $table->foreignId('salle_id')->constrained('salles')->cascadeOnDelete();
@@ -32,4 +26,9 @@ return static function (Capsule $capsule): void {
             $table->timestamps();
         });
     }
-};
+
+    public function down(Capsule $capsule): void
+    {
+        $capsule->schema()->dropIfExists('reservations');
+    }
+}

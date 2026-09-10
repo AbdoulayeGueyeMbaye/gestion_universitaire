@@ -11,8 +11,27 @@ $capsule = require dirname(__DIR__) . '/config/database.php';
 
 try {
     $capsule->getConnection()->getPdo();
-    $migration = require dirname(__DIR__) . '/database/migrations/001_create_tables.php';
-    $migration($capsule);
+    $direction = $argv[1] ?? 'up';
+
+    if (!in_array($direction, ['up', 'down'], true)) {
+        throw new InvalidArgumentException('La direction doit être "up" ou "down".');
+    }
+
+    require dirname(__DIR__) . '/database/migrations/001_create_salles_table.php';
+    require dirname(__DIR__) . '/database/migrations/002_create_reservations_table.php';
+
+    $migrations = [
+        new CreateSallesTable(),
+        new CreateReservationsTable(),
+    ];
+
+    if ($direction === 'down') {
+        $migrations = array_reverse($migrations);
+    }
+
+    foreach ($migrations as $migration) {
+        $migration->{$direction}($capsule);
+    }
 
     fwrite(STDOUT, "Migration terminee.\n");
 } catch (Throwable $exception) {
