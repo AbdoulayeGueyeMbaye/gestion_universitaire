@@ -35,3 +35,4 @@ php database/migrate.php
 ```
 
 La migration nécessite une base MySQL accessible et l'extension PHP `pdo_mysql`.
+Les commandes recommandées sont `php bin/console.php migrate:up` et `php bin/console.php migrate:down`.
