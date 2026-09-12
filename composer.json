@@ -1,0 +1,31 @@
+{
+    "name": "abdoulaye/gestion-universitaire",
+    "description": "Application de gestion des reservations de salles universitaires",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2 || ^8.3",
+        "nikic/fast-route": "^1.3",
+        "respect/validation": "^2.4",
+        "illuminate/database": "^12.0",
+        "php-di/php-di": "^7.0",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "scripts": {
+        "check-autoload": "php -r \"require 'vendor/autoload.php'; echo class_exists('App\\\\Application') ? 'Autoload OK'.PHP_EOL : 'Autoload KO'.PHP_EOL;\"",
+        "migrate-up": "php bin/console.php migrate:up",
+        "migrate-down": "php bin/console.php migrate:down",
+        "db-seed": "php database/seed.php",
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    }
+}
